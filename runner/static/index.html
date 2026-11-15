@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hands-on AX 예제 실행기</title>
+<style>
+:root{
+  --bg:#f6f5f2; --panel:#ffffff; --ink:#1d1d1b; --muted:#6b6a65; --line:#e3e1db;
+  --accent:#2f5d50; --accent-ink:#ffffff; --accent-soft:#e3eee9;
+  --code-bg:#fbfaf7; --out-bg:#f3f2ee; --err:#a3302a; --err-soft:#fbeceb; --warn:#8a5a00;
+  --tag-book:#2f5d50; --tag-help:#7a5a12; --tag-off:#8a8984;
+  --kw:#7a3e9d; --str:#2e7d32; --com:#8a8984; --num:#b5531c; --fn:#1f5fa8; --deco:#a3302a;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 2px 8px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#161614; --panel:#1f1f1c; --ink:#ecebe6; --muted:#a3a29b; --line:#33322e;
+    --accent:#7fb8a4; --accent-ink:#0f1a16; --accent-soft:#22332d;
+    --code-bg:#1a1a18; --out-bg:#232320; --err:#ff8a80; --err-soft:#3a2120; --warn:#e2b45a;
+    --tag-book:#7fb8a4; --tag-help:#e2b45a; --tag-off:#77766f;
+    --kw:#d29bf2; --str:#9ccc65; --com:#77766f; --num:#ffab70; --fn:#82b1ff; --deco:#ff8a80;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#161614; --panel:#1f1f1c; --ink:#ecebe6; --muted:#a3a29b; --line:#33322e;
+  --accent:#7fb8a4; --accent-ink:#0f1a16; --accent-soft:#22332d;
+  --code-bg:#1a1a18; --out-bg:#232320; --err:#ff8a80; --err-soft:#3a2120; --warn:#e2b45a;
+  --tag-book:#7fb8a4; --tag-help:#e2b45a; --tag-off:#77766f;
+  --kw:#d29bf2; --str:#9ccc65; --com:#77766f; --num:#ffab70; --fn:#82b1ff; --deco:#ff8a80;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 "Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif}
+a{color:inherit}
+code,pre,textarea{font-family:"JetBrains Mono","D2Coding",Consolas,"SFMono-Regular",monospace}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:16px;min-height:56px;flex-wrap:wrap;padding-top:6px;padding-bottom:6px}
+.brand{font-weight:700;letter-spacing:-.01em;text-decoration:none;white-space:nowrap}
+.brand small{font-weight:500;color:var(--muted);margin-left:6px}
+.spacer{flex:1}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--panel)}
+.seg button{border:0;background:transparent;color:var(--muted);padding:5px 12px;border-radius:999px;font:inherit;font-size:13px;cursor:pointer}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.keys{font-size:12.5px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:1px;background:var(--tag-off)}
+.dot.ok{background:#3aa676}
+main{padding:28px 0 80px}
+h1{font-size:26px;letter-spacing:-.02em;margin:0 0 6px}
+.lead{color:var(--muted);margin:0 0 24px}
+.part{margin:28px 0 10px;font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.04em}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.card{display:block;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px;box-shadow:var(--shadow);transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.card h3{margin:0 0 6px;font-size:16px;letter-spacing:-.01em}
+.card p{margin:0 0 10px;color:var(--muted);font-size:13.5px}
+.meta{display:flex;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.chip{border:1px solid var(--line);border-radius:999px;padding:1px 8px}
+.chip.live{border-color:var(--accent);color:var(--accent)}
+.note-box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:13.5px;color:var(--muted);margin-top:28px}
+.note-box b{color:var(--ink)}
+.back{font-size:13px;color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink)}
+.toolbar{position:sticky;top:57px;z-index:5;display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:18px}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.5;cursor:default}
+.kstate{font-size:12.5px;color:var(--muted)}
+.mdcell{margin:22px 0 8px}
+.mdcell h2{font-size:20px;margin:26px 0 6px;letter-spacing:-.01em}
+.mdcell h3{font-size:16.5px;margin:20px 0 4px}
+.mdcell h4{font-size:15px;margin:16px 0 4px}
+.mdcell p{margin:6px 0;color:var(--ink)}
+.mdcell code{background:var(--accent-soft);padding:1px 5px;border-radius:4px;font-size:.88em}
+.cell{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin:10px 0;box-shadow:var(--shadow);overflow:hidden}
+.cell.running{border-color:var(--accent)}
+.cell.failed{border-color:var(--err)}
+.chead{display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid var(--line);font-size:12.5px;flex-wrap:wrap}
+.num{color:var(--muted);font-variant-numeric:tabular-nums;min-width:34px}
+.tag{border-radius:6px;padding:1px 7px;font-weight:600;font-size:11.5px;border:1px solid currentColor}
+.tag.book{color:var(--tag-book)} .tag.help{color:var(--tag-help)} .tag.off{color:var(--tag-off)}
+.chead .spacer{flex:1}
+.time{color:var(--muted);font-variant-numeric:tabular-nums}
+.cnote{padding:7px 12px;font-size:12.5px;color:var(--muted);border-bottom:1px solid var(--line);background:var(--code-bg)}
+pre.src,textarea.src{margin:0;padding:12px 14px;background:var(--code-bg);font-size:13px;line-height:1.55;overflow-x:auto;white-space:pre;tab-size:4;color:var(--ink)}
+textarea.src{width:100%;border:0;resize:vertical;outline:none;display:block}
+.k{color:var(--kw)} .s{color:var(--str)} .c{color:var(--com);font-style:italic} .n{color:var(--num)} .f{color:var(--fn)} .d{color:var(--deco)}
+.outs{border-top:1px solid var(--line)}
+.outs:empty{display:none}
+.out{margin:0;padding:10px 14px;font-size:12.8px;line-height:1.55;white-space:pre-wrap;word-break:break-word;background:var(--out-bg);max-height:520px;overflow:auto}
+.out.stderr{color:var(--warn)}
+.out.err{background:var(--err-soft);color:var(--err)}
+.out.err summary{cursor:pointer;font-weight:600}
+.out img{max-width:100%;background:#fff;border-radius:6px}
+.empty-out{padding:8px 14px;font-size:12.5px;color:var(--muted);background:var(--out-bg)}
+.spin{display:inline-block;width:10px;height:10px;border:2px solid var(--accent);border-right-color:transparent;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-1px}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (max-width:600px){ .keys{display:none} h1{font-size:22px} .toolbar{top:0;position:static} }
+.btn.ghost{background:transparent}
+.btn.warn{border-color:var(--err);color:var(--err)}
+.banner{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 14px;font-size:13.5px;margin:0 0 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.banner.warn{border-color:var(--warn)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:0 0 8px}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.step > b{display:block;margin-bottom:4px}
+.step p{margin:0;color:var(--muted);font-size:13.5px}
+.step .n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:12px;font-weight:700;margin-right:6px}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);padding:0;width:min(560px,calc(100vw - 32px))}
+dialog::backdrop{background:rgba(0,0,0,.35)}
+.dlg{padding:18px 20px}
+.dlg h2{margin:0 0 4px;font-size:18px}
+.dlg .sub{margin:0 0 14px;color:var(--muted);font-size:13px}
+.field{margin:12px 0}
+.field label{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px}
+.field label span{font-weight:400;color:var(--muted)}
+.field input[type=password],.field input[type=text]{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--code-bg);color:var(--ink);font:inherit;font-size:13.5px}
+.field small{color:var(--muted);font-size:12px}
+.row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.msg{font-size:12.5px;color:var(--muted);margin-right:auto;align-self:center}
+</style>
+<meta name="runner-token" content="__RUNNER_TOKEN__">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="/" data-link>Hands-on AX <small>예제 실행기</small></a>
+  <span class="spacer"></span>
+  <span class="keys" id="keys"></span>
+  <button class="btn ghost" id="openKeys">API 키 설정</button>
+  <span class="seg" id="mode" title="모델 모드">
+    <button data-mode="real">실제 모델</button><button data-mode="fake">가짜 모델</button>
+  </span>
+</div></header>
+<main class="wrap" id="app"></main>
+
+<dialog id="keysDlg"><form class="dlg" method="dialog" id="keysForm">
+  <h2>API 키 설정</h2>
+  <p class="sub">입력한 키는 이 컴퓨터의 실행기 폴더에 있는 <code>.env</code> 파일에만 저장됩니다. 화면에는 저장 여부만 표시하고 값은 다시 보여 주지 않습니다.</p>
+  <div class="field"><label>OpenAI API 키 <span id="st-OPENAI_API_KEY"></span></label>
+    <input type="password" name="OPENAI_API_KEY" autocomplete="off" placeholder="sk-...">
+    <small>2~13장 예제(gpt-4o-mini 등)에 씁니다.</small></div>
+  <div class="field"><label>Gemini API 키 <span id="st-GEMINI_API_KEY"></span></label>
+    <input type="password" name="GEMINI_API_KEY" autocomplete="off">
+    <small>14·17·18장 평가 사례(gemini-3.5-flash-lite)에 씁니다.</small></div>
+  <div class="field"><label>LangSmith API 키 <span id="st-LANGSMITH_API_KEY"></span></label>
+    <input type="password" name="LANGSMITH_API_KEY" autocomplete="off">
+    <small>12장 실행 기록 남기기에 씁니다. 없어도 됩니다.</small></div>
+  <div class="field"><label><span style="color:var(--ink);font-weight:600"><input type="checkbox" name="LANGSMITH_TRACING"> LangSmith에 실행 기록 보내기</span></label>
+    <input type="text" name="LANGSMITH_PROJECT" placeholder="프로젝트 이름 (예: zmall-support)"></div>
+  <div class="row">
+    <span class="msg" id="keysMsg">빈 칸으로 두면 기존 값을 그대로 둡니다.</span>
+    <button class="btn warn" type="button" id="clearKeys">저장한 키 모두 지우기</button>
+    <button class="btn" value="cancel" formnovalidate>닫기</button>
+    <button class="btn primary" type="button" id="saveKeys">저장</button>
+  </div>
+</form></dialog>
+
+<script>
+const $ = (s, el=document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TOKEN = document.querySelector('meta[name="runner-token"]').content;
+const store = {
+  get(k, d){ try { return localStorage.getItem(k) ?? d } catch(e){ return d } },
+  set(k, v){ try { localStorage.setItem(k, v) } catch(e){} }
+};
+let MODE = store.get('mode', 'real');
+let STATUS = null;
+let CURRENT = null;
+
+async function api(url, body){
+  const opt = {headers: {'X-Runner-Token': TOKEN}};
+  if (body !== undefined){ opt.method = 'POST'; opt.headers['Content-Type'] = 'application/json'; opt.body = JSON.stringify(body); }
+  const r = await fetch(url, opt);
+  return r.json();
+}
+
+// ── 모드·키 상태 ─────────────────────────────
+function renderMode(){
+  document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.mode === MODE));
+  if (CURRENT){ $('#kstate').textContent = kernelText(false); renderBanner(); }
+}
+document.querySelectorAll('#mode button').forEach(b => b.onclick = () => {
+  store.set('mode-set', '1');
+  if (MODE === b.dataset.mode) return;
+  MODE = b.dataset.mode; store.set('mode', MODE); renderMode();
+});
+function renderKeys(){
+  const dot = (ok, name) => `<span><span class="dot ${ok?'ok':''}"></span>${name} ${ok?'있음':'없음'}</span>`;
+  $('#keys').innerHTML = dot(STATUS.openai_key,'OpenAI') + dot(STATUS.gemini_key,'Gemini') + dot(STATUS.langsmith_key,'LangSmith');
+}
+async function loadStatus(){
+  STATUS = await api('/api/status');
+  renderKeys();
+  if (!STATUS.openai_key && store.get('mode-set') !== '1') MODE = 'fake';
+  renderMode();
+}
+function missingKeys(ch){
+  if (MODE !== 'real' || !ch) return [];
+  const miss = [];
+  if (ch.needs.some(n => n.startsWith('OPENAI')) && !STATUS.openai_key) miss.push('OpenAI');
+  if (ch.needs.some(n => n.startsWith('GEMINI')) && !STATUS.gemini_key) miss.push('Gemini');
+  return miss;
+}
+
+// ── 키 설정 창 ─────────────────────────────
+const dlg = $('#keysDlg');
+$('#openKeys').onclick = () => {
+  for (const k of ['OPENAI_API_KEY','GEMINI_API_KEY','LANGSMITH_API_KEY']){
+    const ok = {OPENAI_API_KEY: STATUS.openai_key, GEMINI_API_KEY: STATUS.gemini_key, LANGSMITH_API_KEY: STATUS.langsmith_key}[k];
+    $('#st-' + k).textContent = ok ? '저장됨' : '없음';
+    $(`[name=${k}]`).value = '';
+    $(`[name=${k}]`).placeholder = ok ? '저장됨 · 바꾸려면 새 키를 입력' : '';
+  }
+  $('[name=LANGSMITH_TRACING]').checked = STATUS.langsmith_tracing;
+  $('[name=LANGSMITH_PROJECT]').value = STATUS.langsmith_project || '';
+  $('#keysMsg').textContent = '빈 칸으로 두면 기존 값을 그대로 둡니다.';
+  dlg.showModal();
+};
+async function saveKeys(clear){
+  const body = {};
+  if (clear){ ['OPENAI_API_KEY','GEMINI_API_KEY','LANGSMITH_API_KEY'].forEach(k => body[k] = ''); }
+  else {
+    for (const k of ['OPENAI_API_KEY','GEMINI_API_KEY','LANGSMITH_API_KEY']){ const v = $(`[name=${k}]`).value.trim(); if (v) body[k] = v; }
+  }
+  body.LANGSMITH_TRACING = $('[name=LANGSMITH_TRACING]').checked ? 'true' : '';
+  body.LANGSMITH_PROJECT = $('[name=LANGSMITH_PROJECT]').value.trim();
+  const res = await api('/api/keys', body);
+  if (res.error){ $('#keysMsg').textContent = res.error; return; }
+  STATUS = {...STATUS, ...res}; renderKeys();
+  if (clear && !STATUS.openai_key){ MODE = 'fake'; store.set('mode', MODE); }
+  else if (!clear && STATUS.openai_key && store.get('mode-set') !== '1'){ MODE = 'real'; store.set('mode', MODE); }
+  renderMode();
+  dlg.close();
+  if (CURRENT) $('#kstate').textContent = '키를 바꿔 커널을 모두 다시 시작했습니다 · ' + kernelText(false);
+}
+$('#saveKeys').onclick = () => saveKeys(false);
+$('#clearKeys').onclick = () => { if (confirm('.env에 저장한 API 키를 모두 지울까요?')) saveKeys(true); };
+
+// ── 아주 작은 마크다운·파이썬 강조 ─────────────
+function inline(s){
+  return esc(s).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');
+}
+function markdown(t){
+  const out = []; let list = null;
+  for (const raw of t.split('\n')){
+    const l = raw.trimEnd();
+    const h = l.match(/^(#{1,4})\s+(.*)$/);
+    if (/^\s*[-*]\s+/.test(l)){ (list ||= []).push(`<li>${inline(l.replace(/^\s*[-*]\s+/,''))}</li>`); continue; }
+    if (list){ out.push(`<ul>${list.join('')}</ul>`); list = null; }
+    if (h){ const lv = Math.min(4, h[1].length + 1); out.push(`<h${lv}>${inline(h[2])}</h${lv}>`); }
+    else if (l) out.push(`<p>${inline(l)}</p>`);
+  }
+  if (list) out.push(`<ul>${list.join('')}</ul>`);
+  return out.join('');
+}
+const KW = new Set('False None True and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield'.split(' '));
+function highlight(src, lang){
+  if (lang !== 'py') return esc(src);
+  const re = /("""[\s\S]*?"""|'''[\s\S]*?'''|[rRbBfF]{0,2}"(?:\\.|[^"\\\n])*"|[rRbBfF]{0,2}'(?:\\.|[^'\\\n])*')|(#[^\n]*)|(@[\w.]+)|\b(\d+(?:\.\d+)?)\b|\b([A-Za-z_]\w*)(\s*\()?/g;
+  let out = '', last = 0, m;
+  while ((m = re.exec(src))){
+    out += esc(src.slice(last, m.index));
+    if (m[1]) out += `<span class="s">${esc(m[1])}</span>`;
+    else if (m[2]) out += `<span class="c">${esc(m[2])}</span>`;
+    else if (m[3]) out += `<span class="d">${esc(m[3])}</span>`;
+    else if (m[4]) out += `<span class="n">${esc(m[4])}</span>`;
+    else if (m[5]){
+      if (KW.has(m[5])) out += `<span class="k">${m[5]}</span>` + esc(m[6]||'');
+      else if (m[6]) out += `<span class="f">${m[5]}</span>` + esc(m[6]);
+      else out += m[5];
+    }
+    last = re.lastIndex;
+  }
+  return out + esc(src.slice(last));
+}
+
+// ── 장 목록 ────────────────────────────────
+function kernelText(running){
+  const m = MODE === 'real' ? '실제 모델' : '가짜 모델';
+  return running ? `커널 실행 중 · ${m}` : `${m} 모드 · 셀을 실행하면 커널이 시작됩니다`;
+}
+async function home(){
+  CURRENT = null;
+  document.title = 'Hands-on AX 예제 실행기';
+  const items = await api('/api/chapters');
+  const parts = {};
+  items.forEach(c => (parts[c.part] ||= []).push(c));
+  $('#app').innerHTML = `
+    <h1>장별 예제 실행</h1>
+    <p class="lead">책의 예제 코드를 장별로 열어 셀 단위로 실행하고 결과를 바로 봅니다. 셀은 노트북처럼 위에서부터 이어서 실행됩니다.</p>
+    <div class="steps">
+      <div class="step"><b><span class="n">1</span>API 키 넣기</b><p>위쪽 <b>API 키 설정</b>에서 OpenAI 키를 넣습니다. 키가 없으면 <b>가짜 모델</b>로 흐름만 먼저 볼 수 있습니다.</p></div>
+      <div class="step"><b><span class="n">2</span>장 고르기</b><p>읽고 있는 장을 누릅니다. 셀 순서는 책의 절 순서와 같습니다.</p></div>
+      <div class="step"><b><span class="n">3</span>위에서부터 실행</b><p><b>▶ 실행</b>으로 한 셀씩, <b>▶ 전체 실행</b>으로 끝까지 돌립니다. <b>편집</b>으로 코드를 바꿔 볼 수도 있습니다.</p></div>
+    </div>
+    ${Object.entries(parts).map(([p, cs]) => `
+      <div class="part">${esc(p)}</div>
+      <div class="grid">${cs.map(c => `
+        <a class="card" href="/ch/${c.id}" data-link>
+          <h3>${esc(c.title)}</h3>
+          <p>${esc(c.summary)}</p>
+          <div class="meta">
+            <span class="chip">코드 셀 ${c.code_cells}개</span>
+            ${c.needs.map(n => `<span class="chip">${esc(n)}</span>`).join('')}
+            ${c.running ? '<span class="chip live">커널 실행 중</span>' : ''}
+          </div>
+        </a>`).join('')}
+      </div>`).join('')}
+    <div class="note-box">
+      <b>모델 모드</b> · <b>실제 모델</b>은 저장한 API 키로 실제 모델을 부르므로 사용량만큼 요금이 나갑니다. 2~13장은 원고에 적힌 OpenAI 모델(주로 gpt-4o-mini)을, 14·17·18장 평가는 gemini-3.5-flash-lite를 씁니다.
+      <b>가짜 모델</b>은 키 없이 흐름만 확인하는 연습 모드입니다. 답 문장은 "[가짜 모델]"로 시작하는 예시이고 실제 모델의 답과 다릅니다.
+    </div>`;
+}
+
+// ── 장 화면 ────────────────────────────────
+function renderBanner(){
+  const el = $('#banner'); if (!el) return;
+  const miss = missingKeys(CURRENT);
+  el.innerHTML = miss.length ? `<div class="banner warn">이 장을 실제 모델로 실행하려면 ${miss.join('·')} 키가 필요합니다.
+      <button class="btn" onclick="document.getElementById('openKeys').click()">API 키 설정</button>
+      <button class="btn" onclick="MODE='fake';store.set('mode','fake');store.set('mode-set','1');renderMode()">가짜 모델로 실행</button></div>` : '';
+}
+async function chapter(cid){
+  const ch = await api('/api/chapter/' + cid);
+  if (ch.error){ $('#app').innerHTML = `<a class="back" href="/" data-link>← 장 목록</a><p>${esc(ch.error)}</p>`; return; }
+  CURRENT = ch;
+  document.title = ch.title + ' · 예제 실행기';
+  let n = 0;
+  $('#app').innerHTML = `
+    <a class="back" href="/" data-link>← 장 목록</a>
+    <h1 style="margin-top:8px">${esc(ch.title)}</h1>
+    <p class="lead">${esc(ch.summary)}</p>
+    <div id="banner"></div>
+    <div class="toolbar">
+      <button class="btn primary" id="runall">▶ 전체 실행</button>
+      <button class="btn" id="stop" title="실행 중인 셀을 멈춥니다. 변수도 함께 지워집니다" disabled>■ 중지</button>
+      <button class="btn" id="restart" title="변수를 모두 지우고 새로 시작합니다">커널 다시 시작</button>
+      <button class="btn" id="clear">출력 지우기</button>
+      <span class="kstate" id="kstate">${kernelText(false)}</span>
+    </div>
+    <div id="cells">${ch.cells.map((c, i) => c.type === 'md'
+      ? `<div class="mdcell">${markdown(c.text)}</div>`
+      : cellHtml(c, i, ++n)).join('')}</div>`;
+  renderBanner();
+  $('#runall').onclick = runAll;
+  $('#stop').onclick = async () => { STOPPED = true; await api('/api/stop', {ch: cid}); };
+  $('#restart').onclick = async () => { await api('/api/restart', {ch: cid}); $('#kstate').textContent = '커널을 다시 시작했습니다 · ' + kernelText(false); };
+  $('#clear').onclick = () => document.querySelectorAll('.outs').forEach(o => o.innerHTML = '');
+  document.querySelectorAll('.cell').forEach(el => {
+    const i = +el.dataset.i;
+    $('.run', el)?.addEventListener('click', () => runCell(i));
+    $('.edit', el)?.addEventListener('click', () => toggleEdit(i));
+  });
+}
+function cellHtml(c, i, n){
+  const tag = !c.run ? '<span class="tag off">읽기 전용</span>'
+    : c.tag === '보조' ? '<span class="tag help" title="책 본문 밖의 준비 코드입니다">실행용 보조</span>' : '<span class="tag book" title="책에 실린 코드 그대로입니다">원고</span>';
+  const fakeNote = c.fake_code ? `<div class="cnote">가짜 모델 모드에서는 <code>${esc(c.fake_code)}</code> 를 대신 실행합니다.</div>` : '';
+  return `<div class="cell" id="cell-${i}" data-i="${i}">
+    <div class="chead"><span class="num">[${n}]</span>${tag}<span class="spacer"></span>
+      <span class="time"></span>
+      ${c.run ? `<button class="btn edit" title="코드를 고쳐서 실행해 볼 수 있습니다">편집</button><button class="btn primary run">▶ 실행</button>` : ''}
+    </div>
+    ${c.note ? `<div class="cnote">${inline(c.note)}</div>` : ''}${fakeNote}
+    <pre class="src">${highlight(c.code, c.lang)}</pre>
+    <div class="outs"></div>
+  </div>`;
+}
+function codeOf(i){
+  const el = $('#cell-' + i), ta = $('textarea', el), c = CURRENT.cells[i];
+  if (ta) return ta.value;
+  return (MODE === 'fake' && c.fake_code) ? c.fake_code : c.code;
+}
+function toggleEdit(i){
+  const el = $('#cell-' + i), c = CURRENT.cells[i];
+  const ta = $('textarea', el);
+  if (ta){
+    c.code = ta.value;
+    ta.replaceWith(Object.assign(document.createElement('pre'), {className:'src', innerHTML: highlight(c.code, c.lang)}));
+    $('.edit', el).textContent = '편집';
+  } else {
+    const t = document.createElement('textarea'); t.className = 'src'; t.value = c.code; t.spellcheck = false;
+    t.rows = Math.min(40, c.code.split('\n').length + 1);
+    $('pre.src', el).replaceWith(t); t.focus();
+    $('.edit', el).textContent = '편집 끝';
+  }
+}
+let RUNNING = 0, STOPPED = false;
+async function runCell(i){
+  const el = $('#cell-' + i), outs = $('.outs', el), btn = $('.run', el);
+  el.classList.remove('failed'); el.classList.add('running');
+  btn.disabled = true; $('.time', el).innerHTML = '<span class="spin"></span> 실행 중';
+  outs.innerHTML = '';
+  RUNNING++; $('#stop').disabled = false;
+  let res;
+  try { res = await api('/api/run', {ch: CURRENT.id, mode: MODE, code: codeOf(i)}); }
+  catch(e){ res = {ok:false, outputs:[{type:'error', ename:'연결 오류', evalue:'실행기 서버에 연결할 수 없습니다. 실행기 창(검은 창)이 켜져 있는지 확인하세요.', traceback:''}]}; }
+  RUNNING--; if (!RUNNING && $('#stop')) $('#stop').disabled = true;
+  if (!document.body.contains(el)) return res.ok;
+  el.classList.remove('running'); btn.disabled = false;
+  $('.time', el).textContent = res.seconds != null ? `${res.seconds}초` : '';
+  $('#kstate').textContent = kernelText(true);
+  const c = CURRENT.cells[i];
+  if (!res.ok && c.expect_error){ res.ok = true; res.expected = true; }
+  if (!res.ok) el.classList.add('failed');
+  outs.innerHTML = (res.outputs || []).map(o => {
+    if (o.type === 'stream') return `<pre class="out ${o.name === 'stderr' ? 'stderr' : ''}">${esc(o.text)}</pre>`;
+    if (o.type === 'image') return `<div class="out"><img alt="실행 결과 그림" src="data:image/png;base64,${o.png}"></div>`;
+    if (o.type === 'error') return `<div class="out err"><details><summary>${esc(o.ename)}: ${esc(o.evalue)}</summary><pre class="out err" style="padding:8px 0 0">${esc(o.traceback)}</pre></details></div>`;
+    return '';
+  }).join('') || (res.ok ? '<div class="empty-out">출력 없음 · 실행 완료</div>' : '');
+  if (res.expected) outs.insertAdjacentHTML('afterbegin', '<div class="empty-out">이 셀은 오류가 나는 것이 정상입니다.</div>');
+  return res.ok;
+}
+async function runAll(){
+  const b = $('#runall'); b.disabled = true; STOPPED = false;
+  for (const [i, c] of CURRENT.cells.entries()){
+    if (c.type !== 'code' || !c.run) continue;
+    if (STOPPED) break;
+    $('#cell-' + i).scrollIntoView({block:'nearest', behavior:'smooth'});
+    const ok = await runCell(i);
+    if (!ok){ $('#cell-' + i)?.scrollIntoView({block:'center', behavior:'smooth'}); break; }
+  }
+  if ($('#runall')) $('#runall').disabled = false;
+}
+
+// ── 라우팅 ─────────────────────────────────
+function route(){
+  const m = location.pathname.match(/^\/ch\/([A-Za-z0-9_-]+)/);
+  (m ? chapter(m[1]) : home()).then(() => window.scrollTo(0, 0));
+}
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[data-link]');
+  if (!a || e.metaKey || e.ctrlKey) return;
+  e.preventDefault(); history.pushState(null, '', a.getAttribute('href')); route();
+});
+window.addEventListener('popstate', route);
+loadStatus().then(route);
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+# API 키
+.env
+*.tmp
+# 가상 환경
+.venv_runner/
+.venv/
+# 실행 중에 생기는 파일
+logs/
+work/
+runtime_live/
+live_report.*
+fake_report.*
+axcore_proj/runtime/
+embedding_cache/
+__pycache__/
+.pytest_cache/
+.DS_Store
+# 편집기·OS
+.idea/
+.vscode/
+Thumbs.db
+*.log

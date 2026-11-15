@@ -1,0 +1,9 @@
+# 공통 골격 잠금 파일. 골격을 일부러 고쳤다면 python -m tools.update_lock 으로 갱신한다.
+b892659aee5251169fddf56930b5658c76f7877ac947300cfa6a40c622c4d353  axcore/__init__.py
+6386b548f5193af0585fc3afc5d79c604c7e83c92c534c1c82854a6b8fad5bf1  axcore/contracts.py
+62812c32d7afc7094d3c04bd4ffa63a56eaeb2d84c4cb697044a1a0793a1cc90  axcore/evaluate.py
+52d0298260ba25b5bebb1b588c001b1cb0357a835b7ee19cabd0cf3824b5e9b9  axcore/graph.py
+ca3b86c91f8982fd68cf31e5d668d904b2f7a164599662bf180b8c0d1e81e8bc  axcore/ledger.py
+9995f896ab41d07349fa5ef01be80a439a047519d1415eae8675117cbba56187  axcore/llm.py
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  axtools/__init__.py
+44f8414885fdf7e9156be28dcb3e8d843c661d2418f68f45566e00e47eb3976d  axtools/ocr.py
