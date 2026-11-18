@@ -85,7 +85,7 @@ def test_verifier_catches_duplicate_even_if_model_misses_it(tmp_path):
 
 
 def test_duplicate_caught_even_if_model_omits_business_no(tmp_path):
-    """실제 모델(gemini-3.5-flash-lite) 실행에서 나온 경우: 사업자번호·일시를 비우고 completed로 판단."""
+    """처음 실제 모델로 돌렸을 때 나온 경우: 사업자번호·일시를 비우고 completed로 판단."""
     register = ExpenseRegister()
     register.add({"merchant_key": "1234567890", "paid_at": "2026-09-14 08:42", "total": 18_400})
 

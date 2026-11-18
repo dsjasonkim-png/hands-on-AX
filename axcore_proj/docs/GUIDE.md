@@ -156,8 +156,8 @@ cd .. && python live_check.py --fake      # API 없이 같은 사례를 가짜 �
 
 - **검증함:** 테스트 36개 통과(골격 22개, OCR 4개, 재시작 재개 1개, 템플릿 6개, 모든 job 평가 사례 2개, 골격 잠금 1개). 테스트 안에서 만든 이미지를 실제 Tesseract 한국어 OCR로 읽었고, `create_agent` 연결은 가짜 채팅 모델로 도구 호출부터 구조화 출력까지 확인했어요.
 - **재시작 재개:** SQLite 체크포인터(`SqliteSaver`)로 프로세스를 네 번 새로 띄우며 확인했어요. 템플릿 job의 사유 질문에서 멈춘 실행이 다음 프로세스에서 이어지고, 승인 후 반영되며, 같은 요청을 다시 넣으면 `duplicate`로 끝나요(`tests/test_restart.py`, `langgraph-checkpoint-sqlite` 필요).
-- **실제 LLM:** `google_genai:gemini-3.5-flash-lite`로 템플릿의 평가 사례 5건을 3회 돌려 15/15건이 기대 경로와 같았어요. 실행은 압축본 최상위의 `live_check.py`(윈도우는 `run_live.bat` 더블클릭)로 하고 결과는 `live_report.md`에 남아요. 이 모델은 temperature를 무시하므로 평가 사례는 여러 번 돌려 보세요.
-- **아직 안 함:** 다른 공급자(OpenAI 등)와의 비교, 서버형 체크포인터(PostgresSaver 등), 이미지를 LLM에 직접 넣는 멀티모달 방식.
+- **실제 LLM:** `openai:gpt-6-luna`로 템플릿의 평가 사례 5건을 3회 돌려 15/15건이 기대 경로와 같았어요. 실행은 압축본 최상위의 `live_check.py`(윈도우는 `run_live.bat` 더블클릭)로 하고 결과는 `live_report.md`에 남아요. temperature를 0으로 두어도 실행마다 결과가 조금씩 다르므로 평가 사례는 여러 번 돌려 보세요. 추론 기능이 있는 모델은 `jobs/__init__.py`의 `without_reasoning()`을 거쳐 각 job의 `make_graph()`에 넘어가요.
+- **아직 안 함:** 여러 모델 사이의 비교, 서버형 체크포인터(PostgresSaver 등), 이미지를 LLM에 직접 넣는 멀티모달 방식.
 - **알려진 한계:** 반영 직후 대장에 기록하기 전에 프로세스가 죽으면 중복 가능성이 남아요. 실제 외부 시스템에는 요청 ID를 중복 방지 키로 함께 넘겨야 해요.
 - **알려진 한계:** 검증기 `verify(decision, job_input)`는 되물어 받은 답을 받지 않아요. 되물은 값은 판단 결과 필드에 옮겨 적게 하고 그 필드를 검증하므로, 답에 그 값이 실제로 있었는지는 확인하지 못해요.
 - **알려진 한계:** API 호출 실패(인증 오류, 모델 종료, 네트워크 오류)도 지금은 모델 오류로 세어 3회면 실패로 끝나요.

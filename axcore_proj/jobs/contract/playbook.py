@@ -9,7 +9,7 @@ RULES = {
     "PB-01": {"topic": "대금 지급 기한", "keywords": ["대금", "지급"], "required": True,
               "standard": "검수 완료 후 30일 이내에 대금을 지급한다."},
     "PB-02": {"topic": "손해배상 한도", "keywords": ["손해배상", "배상"], "required": True,
-              "standard": "상대방의 배상 한도는 연간 계약금액 이상이어야 하며, 고의·중과실에는 한도를 두지 않는다."},
+              "standard": "계약 상대방(을)의 배상 한도를 두는 경우 연간 계약금액보다 낮게 정하지 않으며, 고의·중과실에는 한도를 두지 않는다."},
     "PB-03": {"topic": "계약 해지", "keywords": ["해지"], "required": True,
               "standard": "해지는 30일 이상 전에 서면으로 통지한다."},
     "PB-04": {"topic": "비밀유지", "keywords": ["비밀", "기밀"], "required": True,

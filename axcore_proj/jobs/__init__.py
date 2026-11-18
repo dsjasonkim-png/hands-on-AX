@@ -12,7 +12,20 @@ import pkgutil
 from pathlib import Path
 
 # 책 실습의 기본 모델. 바꿀 때는 live_check.py로 모든 job의 평가 사례를 다시 돌린다.
-DEFAULT_MODEL = "google_genai:gemini-3.5-flash-lite"
+DEFAULT_MODEL = "openai:gpt-6-luna"
+
+
+def without_reasoning(model):
+    """실제 모델 연결 보정. 판단 흐름은 바꾸지 않는다(각 job의 make_graph에서만 쓴다).
+
+    추론 기능이 있는 최신 OpenAI 모델(예: gpt-6-luna)은 함수 도구와 함께 쓰면 400 오류를 내고,
+    추론을 켠 채로는 temperature=0도 받지 않는다. 이런 모델은 추론을 꺼서 도구를 쓰게 한다.
+    가짜 판단기(None)와 그 밖의 모델은 그대로 돌려준다.
+    """
+    if not hasattr(model, "reasoning_effort") or model.reasoning_effort is not None:
+        return model
+    profile = getattr(model, "profile", None)     # 라이브러리에 정보가 없는 새 모델(None)도 추론 모델로 본다
+    return model if profile and not profile.get("reasoning_output") else model.model_copy(update={"reasoning_effort": "none"})
 
 
 def job_names(include_template: bool = False) -> list[str]:

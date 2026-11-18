@@ -41,7 +41,7 @@ TOKEN = secrets.token_urlsafe(24)
 PORT = 8765
 
 # 화면에서 저장할 수 있는 설정. 값은 .env에만 쓰고 화면으로 돌려보내지 않는다.
-SECRET_KEYS = ["OPENAI_API_KEY", "GEMINI_API_KEY", "LANGSMITH_API_KEY"]
+SECRET_KEYS = ["OPENAI_API_KEY", "LANGSMITH_API_KEY"]
 PLAIN_KEYS = ["LANGSMITH_TRACING", "LANGSMITH_PROJECT"]
 
 
@@ -81,7 +81,6 @@ def key_status() -> dict:
     has = lambda k: bool(env.get(k) or os.environ.get(k))  # noqa: E731
     return {
         "openai_key": has("OPENAI_API_KEY"),
-        "gemini_key": has("GEMINI_API_KEY") or has("GOOGLE_API_KEY"),
         "langsmith_key": has("LANGSMITH_API_KEY"),
         "langsmith_tracing": (env.get("LANGSMITH_TRACING") or os.environ.get("LANGSMITH_TRACING", "")).lower() == "true",
         "langsmith_project": env.get("LANGSMITH_PROJECT") or os.environ.get("LANGSMITH_PROJECT", ""),

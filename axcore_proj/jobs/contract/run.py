@@ -9,6 +9,7 @@ import shutil
 from pathlib import Path
 
 from axcore import Ledger, Trigger, build_graph, pending, resume, start
+from jobs import without_reasoning
 
 from .spec import make_spec
 
@@ -32,7 +33,7 @@ def main() -> None:
     model = None
     if args.live:
         from langchain.chat_models import init_chat_model
-        model = init_chat_model(args.live, temperature=0)
+        model = without_reasoning(init_chat_model(args.live, temperature=0))
     graph = build_graph(make_spec(review_dir=RUNTIME / "reviews", model=model), Ledger(RUNTIME / "ledger.json"))
 
     for rid, payload, replies in CASES:

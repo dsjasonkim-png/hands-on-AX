@@ -6,6 +6,8 @@ from pathlib import Path
 
 from axcore import Ledger, build_graph
 
+from jobs import without_reasoning
+
 from .playbook import VERSION
 from .run import CASES as DEMO_CASES
 from .spec import make_spec
@@ -20,7 +22,7 @@ EXPECT = {
 # 플레이북 기준을 모두 충족하는 계약서. 문제가 없어도 담당자 확인을 거친다(승인 정책이 항상 human).
 # 처음 문안은 PB-04의 '고객정보·영업비밀' 범위가 빠져 있었다. 실제 모델이 이를 짚어 문안을 기준에 맞췄다(18장).
 COMPLIANT = ("표준 물류 계약서\n제1조 (대금 지급) 갑은 검수 완료 후 30일 이내에 대금을 지급한다.\n"
-             "제2조 (손해배상) 을의 배상 한도는 연간 계약금액 이상으로 하되, 고의 또는 중대한 과실에는 한도를 두지 않는다.\n"
+             "제2조 (손해배상) 을의 배상 한도는 연간 계약금액으로 하되, 고의 또는 중대한 과실에는 한도를 두지 않는다.\n"
              "제3조 (해지) 각 당사자는 30일 전 서면 통지로 해지할 수 있다.\n"
              "제4조 (비밀유지) 을은 갑의 고객정보와 영업비밀을 비밀로 유지하며, 이 의무는 계약 종료 후 3년간 존속한다.\n"
              "제5조 (관할) 서울중앙지방법원을 관할 법원으로 한다.")
@@ -48,4 +50,4 @@ CASES = [{"case_id": rid, "trigger": {"request_id": rid, "payload": payload},
 
 def make_graph(model=None, runtime: str | Path | None = None):
     runtime = Path(runtime) if runtime else Path(tempfile.mkdtemp(prefix="contract-"))
-    return build_graph(make_spec(review_dir=runtime / "reviews", model=model), Ledger(runtime / "ledger.json"))
+    return build_graph(make_spec(review_dir=runtime / "reviews", model=without_reasoning(model)), Ledger(runtime / "ledger.json"))

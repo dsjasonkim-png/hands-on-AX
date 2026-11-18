@@ -22,10 +22,8 @@ fi
 
 VPY=.venv_runner/bin/python
 if ! cmp -s requirements.txt .venv_runner/installed.txt; then
-  echo "[2/2] 패키지 설치 중 (처음 한 번, 몇 분 걸립니다)"
-  "$VPY" -m pip install -q --upgrade pip
-  if ! "$VPY" -m pip install -q -r requirements.txt; then
-    echo "패키지 설치에 실패했습니다. 위 메시지를 확인하세요."
+  echo "[2/2] 패키지 설치 중 (처음 한 번만, 진행 상황이 아래에 나옵니다)"
+  if ! "$VPY" runner/install.py; then
     read -r -p "Enter를 누르면 창을 닫습니다." _; exit 1
   fi
   cp requirements.txt .venv_runner/installed.txt

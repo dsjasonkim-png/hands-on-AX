@@ -6,6 +6,8 @@ from pathlib import Path
 
 from axcore import Ledger, build_graph
 
+from jobs import without_reasoning
+
 from .register import ExpenseRegister
 from .run import CASES as DEMO_CASES
 from .spec import make_spec
@@ -37,5 +39,5 @@ CASES = [{"case_id": rid,
 
 def make_graph(model=None, runtime: str | Path | None = None):
     runtime = Path(runtime) if runtime else Path(tempfile.mkdtemp(prefix="receipt-"))
-    return build_graph(make_spec(register=ExpenseRegister(runtime / "register.json"), model=model),
+    return build_graph(make_spec(register=ExpenseRegister(runtime / "register.json"), model=without_reasoning(model)),
                        Ledger(runtime / "ledger.json"))

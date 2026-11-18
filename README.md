@@ -9,8 +9,7 @@
 
 - 파이썬 3.11 이상 (3.12 권장) — <https://www.python.org/downloads/>
   - Windows에서 설치할 때 **Add python.exe to PATH**에 체크합니다.
-- OpenAI API 키 (2~13장, 16장) — <https://platform.openai.com/api-keys>
-- Gemini API 키 (14·16·17·18장의 기본 모델, 선택) — <https://aistudio.google.com/apikey>
+- OpenAI API 키 (2~18장) — <https://platform.openai.com/api-keys>
 - 키가 없어도 **가짜 모델** 모드로 실행 흐름은 볼 수 있습니다.
 
 ## 내려받기
@@ -30,7 +29,7 @@ cd hands-on-AX
 | macOS | `run_book_runner.command`를 두 번 누릅니다. 처음에 "확인되지 않은 개발자" 경고가 뜨면 파일을 **오른쪽 버튼 → 열기**로 엽니다. |
 | Linux | 터미널에서 `./run_book_runner.command`를 실행합니다. |
 
-처음 한 번은 가상 환경(`.venv_runner`)을 만들고 패키지를 설치하느라 몇 분 걸립니다. 그다음부터는 바로 뜹니다.
+처음 한 번은 가상 환경(`.venv_runner`)을 만들고 패키지를 설치하느라 5~15분쯤 걸립니다. 실행 창에 받는 패키지와 경과 시간이 표시되고, 오래 조용한 단계에서도 15초마다 아직 작업 중이라고 알려 줍니다. 그다음부터는 바로 뜹니다.
 서버가 뜨면 브라우저에서 `http://127.0.0.1:8765`가 열립니다. 끝낼 때는 실행 창에서 `Ctrl+C`를 누르거나 창을 닫습니다.
 
 ## 사용법
@@ -56,7 +55,7 @@ cd hands-on-AX
 ## 자주 묻는 것
 
 - **브라우저가 열리지 않아요.** 실행 창에 나온 주소(`http://127.0.0.1:8765` 등)를 직접 열어 보세요. 8765번 포트가 쓰이고 있으면 다음 번호로 자동으로 바꿉니다.
-- **패키지 설치가 실패해요.** 회사 네트워크에서 PyPI 접속이 막혀 있을 수 있습니다. 실행 창의 오류 메시지를 확인하세요.
+- **패키지 설치가 실패해요.** 회사 네트워크에서 PyPI 접속이 막혀 있을 수 있습니다. `logs/install.log`의 마지막 부분에 원인이 남습니다. 중간에 창을 닫았다면 실행 파일을 다시 누르면 이어서 설치합니다.
 - **셀이 오래 걸리거나 멈췄어요.** **■ 중지**를 누르면 그 장의 실행이 멈추고 변수도 지워집니다. 위에서부터 다시 실행하세요.
 - **문제가 생겼을 때 볼 곳은?** `logs/` 폴더에 장별 실행 로그가 남습니다.
 
@@ -70,7 +69,7 @@ cd hands-on-AX
 |---|---|
 | `chapters/` | 장별 셀 정의(`chNN.md`)와 장에서 쓰는 파일(`chNN/`) |
 | `runner/` | 서버, 셀 실행 프로세스, 가짜 모델, 화면 |
-| `axcore_proj/` | 14장 공통 골격 + 16장 `jobs/commerce_analysis` + 17장 `jobs/receipt` + 18장 `jobs/contract` |
-| `live_check.py` | 14·16·17·18장 평가 사례를 실제 모델로 돌리는 스크립트 |
+| `axcore_proj/` | 14장 공통 골격 + 15장 `jobs/folder_search` + 16장 `jobs/commerce_analysis` + 17장 `jobs/receipt` + 18장 `jobs/contract` |
+| `live_check.py` | 14~18장 평가 사례를 실제 모델로 돌리는 스크립트 |
 | `tools/check_examples.py` | 모든 장을 화면 없이 실행해 보는 점검 스크립트(관리자용) |
 | `docs/장_추가하기.md` | 새 장을 추가하는 방법(관리자용) |

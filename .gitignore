@@ -11,6 +11,7 @@ runtime_live/
 live_report.*
 fake_report.*
 axcore_proj/runtime/
+axcore_proj/samples/folder_search/files/.index.json
 embedding_cache/
 __pycache__/
 .pytest_cache/

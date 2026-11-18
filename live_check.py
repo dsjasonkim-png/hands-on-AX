@@ -2,11 +2,11 @@
 
 사용법 (이 파일은 axcore_proj 폴더 바로 바깥에 둔다):
     python live_check.py                                   # 기본 모델, 모든 job, 1회
-    python live_check.py google_genai:gemini-3.5-flash-lite --repeat 3
-    python live_check.py openai:gpt-4.1-mini --jobs <job1>,<job2>
+    python live_check.py openai:gpt-6-luna --repeat 3
+    python live_check.py openai:gpt-6-luna --jobs <job1>,<job2>
     python live_check.py --fake                            # API 없이 가짜 판단기로 흐름만 확인(fake_report.md)
 
-- 같은 폴더(또는 상위 폴더)의 .env에서 키를 읽는다. GEMINI_API_KEY는 GOOGLE_API_KEY로도 넣어 준다.
+- 같은 폴더(또는 상위 폴더)의 .env에서 키(OPENAI_API_KEY)를 읽는다.
 - 각 job은 jobs/<이름>/eval_cases.py에 make_graph(model, runtime)와 CASES를 둔다(axcore_proj/docs/GUIDE.md 참고).
 - 실제 모델은 실행마다 결과가 달라질 수 있으니 --repeat로 여러 번 돌려 본다.
 - API 키는 어디에도 기록하지 않는다.
@@ -46,8 +46,6 @@ def load_env() -> None:
             os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
         print(f"[.env] {env} 읽음")
         break
-    if os.environ.get("GEMINI_API_KEY") and not os.environ.get("GOOGLE_API_KEY"):
-        os.environ["GOOGLE_API_KEY"] = os.environ["GEMINI_API_KEY"]
 
 
 def last_message(graph, case_id: str) -> str:

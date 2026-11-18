@@ -1,0 +1,3 @@
+# folder_search job 추가 의존성 (골격 requirements.txt 외). 설치: pip install -r jobs/folder_search/requirements.txt
+numpy                                   # semantic_search 유사도 계산(InMemoryVectorStore)
+markitdown[pdf,docx,pptx,xlsx]==0.1.9   # PPTX·DOCX·XLSX·PDF → 마크다운. 샘플 PPT·엑셀 생성(python-pptx·openpyxl)도 함께 설치됨

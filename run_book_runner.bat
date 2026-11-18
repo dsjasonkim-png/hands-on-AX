@@ -26,11 +26,11 @@ if not exist "%VPY%" (
 
 :have_venv
 if exist ".venv_runner\installed.txt" fc /b requirements.txt .venv_runner\installed.txt >nul 2>&1 && goto run
-echo [3/3] Installing packages - first run only, takes a few minutes
-"%VPY%" -m pip install -q --upgrade pip
-"%VPY%" -m pip install -q -r requirements.txt
+echo [3/3] Installing packages - first run only. Progress is shown below.
+set "PYTHONUTF8=1"
+"%VPY%" runner\install.py
 if errorlevel 1 (
-  echo     Package install failed. Check the messages above.
+  echo     Package install failed. See logs\install.log
   goto end
 )
 copy /y requirements.txt .venv_runner\installed.txt >nul

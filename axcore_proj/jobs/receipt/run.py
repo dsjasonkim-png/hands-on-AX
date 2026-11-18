@@ -11,7 +11,7 @@ from pathlib import Path
 
 from axcore import Ledger, Trigger, build_graph, pending, resume, start
 
-from jobs import DEFAULT_MODEL
+from jobs import DEFAULT_MODEL, without_reasoning
 
 from .register import ExpenseRegister
 from .spec import make_spec
@@ -38,7 +38,7 @@ def main() -> None:
     model = None
     if args.live:
         from langchain.chat_models import init_chat_model
-        model = init_chat_model(args.live, temperature=0)
+        model = without_reasoning(init_chat_model(args.live, temperature=0))
     spec = make_spec(register=ExpenseRegister(RUNTIME / "register.json"), model=model)
     graph = build_graph(spec, Ledger(RUNTIME / "ledger.json"))
 

@@ -5,5 +5,5 @@ pydantic==2.13.5
 pillow==12.3.0
 pytesseract==0.3.13   # 실제 OCR용. Tesseract 본체(tesseract-ocr, tesseract-ocr-kor)는 OS에 따로 설치
 langgraph-checkpoint-sqlite==3.1.1   # 선택: 재시작 검증 테스트(tests/test_restart.py)용 영구 체크포인터
-langchain-google-genai==4.4.0   # 기본 모델(Gemini) 연결. OpenAI를 쓰면 langchain-openai 설치
+langchain-openai==1.6.2   # 기본 모델(openai:gpt-6-luna) 연결
 pytest>=8
